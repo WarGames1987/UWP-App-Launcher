@@ -8,14 +8,8 @@
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource AppBarBackground}">
-        
+
         <Grid Margin="12,0">
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground"
-                            Value="White" />
-                </Style>
-            </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
@@ -118,7 +112,6 @@
                                         Name="buttonsPanel">
                     <TextBlock Text="Background Image"
                                        FontWeight="SemiBold"
-                                       Foreground="#F5F5F6"
                                VerticalAlignment="Center"/>
                     
                         <Button Content="Add Image"

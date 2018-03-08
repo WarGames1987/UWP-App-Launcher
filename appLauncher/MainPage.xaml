@@ -30,7 +30,7 @@
                 SelectionChanged="screensContainerFlipView_SelectionChanged">
                 <FlipViewItem Name="specialScreen"
                           Background="Transparent"
-                              Visibility="Collapsed">
+                              Visibility="Visible">
                     <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
                         <Image Source="Assets\CortanaLogo.png"

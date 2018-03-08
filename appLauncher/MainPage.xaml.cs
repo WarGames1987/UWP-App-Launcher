@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
+using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
@@ -41,12 +42,14 @@ namespace appLauncher
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private Accelerometer _accelerometer;
         private int maxRows;
         public ObservableCollection<finalAppItem> finalApps;
         public ObservableCollection<finalAppItem> queriedApps = new ObservableCollection<finalAppItem>();
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
+
 
         /// <summary>
         /// Runs when a new instance of MainPage is created
@@ -62,8 +65,10 @@ namespace appLauncher
                 queriedApps.Add(item);
             }
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
-
+            
         }
+
+        
 
         private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
         {
@@ -128,7 +133,7 @@ namespace appLauncher
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
 
             maxRows = (int)(appGridView.ActualHeight / 124);
@@ -207,7 +212,7 @@ namespace appLauncher
                 GridView finalGridOfApps = (GridView)finalScreen.Content;
                 addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
                 screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
-                AdjustIndicatorStackPanel(1);
+               await AdjustIndicatorStackPanel(1);
             }
             else
             {
@@ -220,6 +225,7 @@ namespace appLauncher
             pageIsLoaded = true;
             screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
 
+            
 
 
 
@@ -336,7 +342,7 @@ namespace appLauncher
                     //Swipe Right for Cortana!
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
-                   await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
+                    await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
                 }
                 else
                 {
@@ -358,13 +364,13 @@ namespace appLauncher
                     var ellipse = (Ellipse)indicator.Children[i];
                     ellipseToAnimate = ellipse;
                     ellipse.Fill = new SolidColorBrush((Color)App.Current.Resources["SystemAccentColor"]);
-                    
+
                 }
                 else
                 {
                     var ellipse = (Ellipse)indicator.Children[i];
                     ellipse.Fill = (SolidColorBrush)App.Current.Resources["DefaultTextForegroundThemeBrush"];
-                    
+
                 }
             }
             float centerX = (float)ellipseToAnimate.ActualWidth / 2;
@@ -374,13 +380,13 @@ namespace appLauncher
             double duration = 300;
             if (IndicatorAnimation.oldAnimatedEllipse != null)
             {
-            await Task.WhenAll(ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY,duration, easingType: EasingType.Back).StartAsync(),
-                IndicatorAnimation.oldAnimatedEllipse.Scale(1,1,centerX,centerY, duration, easingType: EasingType.Back).StartAsync());
+                await Task.WhenAll(ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration, easingType: EasingType.Back).StartAsync(),
+                    IndicatorAnimation.oldAnimatedEllipse.Scale(1, 1, centerX, centerY, duration, easingType: EasingType.Back).StartAsync());
 
             }
             else
             {
-                await ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration,easingType: EasingType.Bounce).StartAsync();
+                await ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration, easingType: EasingType.Bounce).StartAsync();
             }
 
             IndicatorAnimation.oldAnimatedEllipse = ellipseToAnimate;
